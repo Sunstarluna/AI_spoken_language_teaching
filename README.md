@@ -20,10 +20,15 @@ python3 --version
 
 ### 2、下载源码/安装依赖/配置
 **下载源码**
+
 git clone https://github.com/Sunstarluna/AI_spoken_language_teaching
+
 **切换到项目文件目录**
+
 cd AI_spoken_language_teaching
+
 **安装依赖**
+
 pip3 install -r requirements.txt 
 
 pip3 install flask
