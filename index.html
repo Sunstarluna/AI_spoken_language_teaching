@@ -74,12 +74,6 @@
             color: white;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-        }
-
-        .teacher-profile {
-            display: flex;
-            align-items: center;
         }
 
         .teacher-avatar {
@@ -106,27 +100,6 @@
             opacity: 0.8;
         }
 
-        .course-selector select {
-            padding: 8px 12px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
-            font-size: 14px;
-            cursor: pointer;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        .course-selector select:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .course-selector select option {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
         .chat-messages {
             flex: 1;
             padding: 20px;
@@ -137,7 +110,7 @@
         }
 
         .message {
-            max-width: 70%;
+            max-width: 80%;
             padding: 12px 15px;
             border-radius: 18px;
             position: relative;
@@ -171,13 +144,9 @@
 
         .message-time {
             font-size: 10px;
-            color: var(--gray-color);
+            opacity: 0.7;
             margin-top: 5px;
             text-align: right;
-        }
-
-        .message.student .message-time {
-            color: rgba(255, 255, 255, 0.7);
         }
 
         .audio-message {
@@ -185,64 +154,49 @@
             align-items: center;
             gap: 10px;
             cursor: pointer;
-            padding: 5px;
-            border-radius: 10px;
-            transition: background-color 0.2s;
-        }
-
-        .audio-message:hover {
-            background-color: rgba(0, 0, 0, 0.05);
-        }
-
-        .message.student .audio-message:hover {
-            background-color: rgba(255, 255, 255, 0.1);
         }
 
         .audio-icon {
+            width: 24px;
+            height: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .audio-icon svg {
+            fill: currentColor;
+        }
+
+        .audio-duration {
+            font-size: 12px;
         }
 
         .audio-waveform {
             display: flex;
             align-items: center;
             gap: 2px;
-            height: 20px;
         }
 
         .waveform-bar {
-            width: 3px;
-            background-color: var(--gray-color);
-            border-radius: 3px;
-        }
-
-        .message.student .waveform-bar {
-            background-color: rgba(255, 255, 255, 0.7);
-        }
-
-        .audio-message.playing .waveform-bar {
-            animation: sound 1.5s infinite alternate;
-        }
-
-        @keyframes sound {
-            0% {
-                height: 5px;
-            }
-
-            100% {
-                height: 15px;
-            }
+            width: 2px;
+            height: 15px;
+            background-color: currentColor;
+            opacity: 0.5;
+            border-radius: 1px;
         }
 
         .control-panel {
+            padding: 15px 20px;
+            background-color: #f8f9fa;
             display: flex;
-            padding: 15px;
-            gap: 10px;
-            border-top: 1px solid var(--light-gray);
+            align-items: center;
+            gap: 15px;
+            border-top: 1px solid #e9ecef;
         }
 
         .record-btn {
+            flex: 1;
             padding: 12px;
             border: none;
             border-radius: 30px;
@@ -326,19 +280,10 @@
 
         <div class="chat-container">
             <div class="chat-header">
-                <div class="teacher-profile">
-                    <div class="teacher-avatar">T</div>
-                    <div class="teacher-info">
-                        <h3>Sarah Johnson</h3>
-                        <p>英语外教 · 在线</p>
-                    </div>
-                </div>
-                <div class="course-selector">
-                    <select id="courseSelect">
-                        <option value="L0">基础问候与礼貌用语</option>
-                        <option value="L1" selected>餐厅对话</option>
-                        <option value="L2">商务会议英语</option>
-                    </select>
+                <div class="teacher-avatar">T</div>
+                <div class="teacher-info">
+                    <h3>Sarah Johnson</h3>
+                    <p>英语外教 · 在线</p>
                 </div>
             </div>
 
@@ -381,7 +326,6 @@
         let audioChunks = [];
         let mediaStream;
         let activeSoundElement = null;
-        let currentCourseLevel = "L1";
 
         // 获取当前时间
         function getCurrentTime() {
@@ -476,22 +420,6 @@
             }
         });
 
-        // 监听课程选择变化
-        document.getElementById('courseSelect').addEventListener('change', function () {
-            const previousLevel = currentCourseLevel;
-            currentCourseLevel = this.value;
-
-            // 添加课程变更通知
-            let courseName = "";
-            switch (currentCourseLevel) {
-                case "L0": courseName = "基础问候与礼貌用语"; break;
-                case "L1": courseName = "餐厅对话"; break;
-                case "L2": courseName = "商务会议英语"; break;
-            }
-
-            addMessage(`课程已切换到：${courseName}。让我们开始新的对话吧！`, false);
-        });
-
         document.getElementById('startBtn').addEventListener('click', async () => {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -506,7 +434,6 @@
                     const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
                     const formData = new FormData();
                     formData.append('audio', audioBlob, 'recording.webm');
-                    formData.append('level', currentCourseLevel);  // 添加课程级别
 
                     // 添加学生的录音消息
                     const studentAudioUrl = URL.createObjectURL(audioBlob);
@@ -518,7 +445,7 @@
                     loadingMessage.innerHTML = '<div>正在思考...</div>';
                     document.getElementById('chatMessages').appendChild(loadingMessage);
 
-                    fetch('http://localhost:5010/upload', {
+                    fetch('/upload', {
                         method: 'POST',
                         body: formData
                     })
