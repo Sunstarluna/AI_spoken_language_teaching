@@ -22,15 +22,22 @@ python3 --version
 **下载源码**
 git clone https://github.com/Sunstarluna/AI_spoken_language_teaching
 **切换到项目文件目录**
- cd AI_spoken_language_teaching
+cd AI_spoken_language_teaching
 **安装依赖**
 pip3 install -r requirements.txt 
-pip3 install flas
+
+pip3 install flask
+
 pip3 install flask-cors
+
 pip3 install pydub
-sudo apt update && sudo apt install python3-dev libasound2-dev
-pip3 install simpleaudio 
+
 sudo apt update
+
+sudo apt update && sudo apt install python3-dev libasound2-dev
+
+pip3 install simpleaudio
+
 sudo apt install -y libasound2-dev ffmpeg libsndfile1 python3-dev
 
 ### 注意
