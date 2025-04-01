@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英语口语练习 - 外教对话</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #f72585;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #4caf50;
+            --danger-color: #f44336;
+            --gray-color: #6c757d;
+            --light-gray: #e9ecef;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fb;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .app-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .app-title {
+            color: var(--primary-color);
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .app-subtitle {
+            color: var(--gray-color);
+            font-size: 14px;
+        }
+
+        .chat-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 70vh;
+        }
+
+        .chat-header {
+            padding: 15px 20px;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .teacher-profile {
+            display: flex;
+            align-items: center;
+        }
+
+        .teacher-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .teacher-info h3 {
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .teacher-info p {
+            font-size: 12px;
+            margin: 0;
+            opacity: 0.8;
+        }
+
+        .course-selector select {
+            padding: 8px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .course-selector select:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .course-selector select option {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 12px 15px;
+            border-radius: 18px;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.teacher {
+            align-self: flex-start;
+            background-color: var(--light-gray);
+            border-bottom-left-radius: 5px;
+        }
+
+        .message.student {
+            align-self: flex-end;
+            background-color: var(--primary-color);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message-time {
+            font-size: 10px;
+            color: var(--gray-color);
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        .message.student .message-time {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .audio-message {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .audio-message:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .message.student .audio-message:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .audio-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .audio-waveform {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            height: 20px;
+        }
+
+        .waveform-bar {
+            width: 3px;
+            background-color: var(--gray-color);
+            border-radius: 3px;
+        }
+
+        .message.student .waveform-bar {
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        .audio-message.playing .waveform-bar {
+            animation: sound 1.5s infinite alternate;
+        }
+
+        @keyframes sound {
+            0% {
+                height: 5px;
+            }
+
+            100% {
+                height: 15px;
+            }
+        }
+
+        .control-panel {
+            display: flex;
+            padding: 15px;
+            gap: 10px;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .record-btn {
+            padding: 12px;
+            border: none;
+            border-radius: 30px;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .record-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .record-btn:disabled {
+            background-color: var(--gray-color);
+            cursor: not-allowed;
+        }
+
+        .record-btn.recording {
+            background-color: var(--danger-color);
+            animation: pulse 1.5s infinite;
+        }
+
+        .record-btn.stop {
+            background-color: var(--danger-color);
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .record-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hidden-player {
+            display: none;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 10px;
+                margin: 10px auto;
+            }
+
+            .chat-container {
+                height: 80vh;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="app-header">
+            <h1 class="app-title">英语口语练习</h1>
+            <p class="app-subtitle">与AI外教进行实时对话，提升你的英语口语能力</p>
+        </div>
+
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="teacher-profile">
+                    <div class="teacher-avatar">T</div>
+                    <div class="teacher-info">
+                        <h3>Sarah Johnson</h3>
+                        <p>英语外教 · 在线</p>
+                    </div>
+                </div>
+                <div class="course-selector">
+                    <select id="courseSelect">
+                        <option value="L0">基础问候与礼貌用语</option>
+                        <option value="L1" selected>餐厅对话</option>
+                        <option value="L2">商务会议英语</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="message teacher">
+                    <div>你好！我是你的英语外教Sarah。今天我们来练习一些餐厅相关的英语对话。你可以开始录音，用英语向我问候。</div>
+                    <div class="message-time">刚刚</div>
+                </div>
+            </div>
+
+            <div class="control-panel">
+                <button id="startBtn" class="record-btn">
+                    <span class="record-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                            <line x1="12" y1="19" x2="12" y2="22"></line>
+                        </svg>
+                    </span>
+                    开始录音
+                </button>
+                <button id="stopBtn" class="record-btn stop" disabled>
+                    <span class="record-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="6" y="6" width="12" height="12" rx="2" ry="2"></rect>
+                        </svg>
+                    </span>
+                    停止录音
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="audioPlayer" class="hidden-player" controls></audio>
+
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+        let mediaStream;
+        let activeSoundElement = null;
+        let currentCourseLevel = "L1";
+
+        // 获取当前时间
+        function getCurrentTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+
+        // 添加消息到聊天窗口
+        function addMessage(content, isStudent = false, isAudio = false, audioUrl = null) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isStudent ? 'student' : 'teacher'}`;
+
+            if (isAudio) {
+                // 创建音频消息
+                const audioMessage = document.createElement('div');
+                audioMessage.className = 'audio-message';
+                audioMessage.dataset.audioUrl = audioUrl;
+
+                // 音频图标
+                const audioIcon = document.createElement('div');
+                audioIcon.className = 'audio-icon';
+                audioIcon.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                    </svg>
+                `;
+
+                // 音频波形
+                const audioWaveform = document.createElement('div');
+                audioWaveform.className = 'audio-waveform';
+                for (let i = 0; i < 10; i++) {
+                    const bar = document.createElement('div');
+                    bar.className = 'waveform-bar';
+                    bar.style.height = `${Math.floor(Math.random() * 12) + 4}px`;
+                    audioWaveform.appendChild(bar);
+                }
+
+                audioMessage.appendChild(audioIcon);
+                audioMessage.appendChild(audioWaveform);
+
+                // 点击播放音频
+                audioMessage.addEventListener('click', function () {
+                    const player = document.getElementById('audioPlayer');
+
+                    // 如果有正在播放的音频，先停止它
+                    if (activeSoundElement && activeSoundElement !== this) {
+                        activeSoundElement.classList.remove('playing');
+                    }
+
+                    if (player.src !== this.dataset.audioUrl) {
+                        player.src = this.dataset.audioUrl;
+                        player.play();
+                        this.classList.add('playing');
+                        activeSoundElement = this;
+                    } else if (player.paused) {
+                        player.play();
+                        this.classList.add('playing');
+                        activeSoundElement = this;
+                    } else {
+                        player.pause();
+                        this.classList.remove('playing');
+                        activeSoundElement = null;
+                    }
+                });
+
+                messageDiv.appendChild(audioMessage);
+            } else {
+                // 文本消息
+                messageDiv.innerHTML = `<div>${content}</div>`;
+            }
+
+            // 添加时间戳
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'message-time';
+            timeDiv.textContent = getCurrentTime();
+            messageDiv.appendChild(timeDiv);
+
+            messagesContainer.appendChild(messageDiv);
+
+            // 滚动到底部
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // 音频播放结束事件
+        document.getElementById('audioPlayer').addEventListener('ended', function () {
+            if (activeSoundElement) {
+                activeSoundElement.classList.remove('playing');
+                activeSoundElement = null;
+            }
+        });
+
+        // 监听课程选择变化
+        document.getElementById('courseSelect').addEventListener('change', function () {
+            const previousLevel = currentCourseLevel;
+            currentCourseLevel = this.value;
+
+            // 添加课程变更通知
+            let courseName = "";
+            switch (currentCourseLevel) {
+                case "L0": courseName = "基础问候与礼貌用语"; break;
+                case "L1": courseName = "餐厅对话"; break;
+                case "L2": courseName = "商务会议英语"; break;
+            }
+
+            addMessage(`课程已切换到：${courseName}。让我们开始新的对话吧！`, false);
+        });
+
+        document.getElementById('startBtn').addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaStream = stream;
+                mediaRecorder = new MediaRecorder(stream);
+
+                mediaRecorder.ondataavailable = event => {
+                    audioChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const formData = new FormData();
+                    formData.append('audio', audioBlob, 'recording.webm');
+                    formData.append('level', currentCourseLevel);  // 添加课程级别
+
+                    // 添加学生的录音消息
+                    const studentAudioUrl = URL.createObjectURL(audioBlob);
+                    addMessage('', true, true, studentAudioUrl);
+
+                    // 显示加载状态
+                    const loadingMessage = document.createElement('div');
+                    loadingMessage.className = 'message teacher';
+                    loadingMessage.innerHTML = '<div>正在思考...</div>';
+                    document.getElementById('chatMessages').appendChild(loadingMessage);
+
+                    fetch('http://localhost:5010/upload', {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.text().then(text => {
+                                    throw new Error(`Server error: ${text}`);
+                                });
+                            }
+                            return response.blob();
+                        })
+                        .then(blob => {
+                            // 移除加载消息
+                            document.getElementById('chatMessages').removeChild(loadingMessage);
+
+                            // 添加老师的回复
+                            const audioUrl = URL.createObjectURL(blob);
+                            addMessage('', false, true, audioUrl);
+
+                            // 自动播放老师的回复
+                            const player = document.getElementById('audioPlayer');
+                            player.src = audioUrl;
+                            player.play();
+                        })
+                        .catch(error => {
+                            // 移除加载消息
+                            document.getElementById('chatMessages').removeChild(loadingMessage);
+
+                            console.error('上传音频失败:', error);
+                            addMessage(`抱歉，处理你的录音时出现了问题: ${error.message}`, false);
+                        });
+
+                    audioChunks = [];
+                };
+
+                mediaRecorder.start();
+                document.getElementById('startBtn').disabled = true;
+                document.getElementById('stopBtn').disabled = false;
+                document.getElementById('startBtn').classList.add('recording');
+            } catch (error) {
+                console.error('获取媒体设备失败:', error);
+                alert('无法访问麦克风，请确保已授予麦克风访问权限');
+            }
+        });
+
+        document.getElementById('stopBtn').addEventListener('click', () => {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                if (mediaStream) {
+                    mediaStream.getTracks().forEach(track => track.stop());
+                }
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+                document.getElementById('startBtn').classList.remove('recording');
+            }
+        });
+    </script>
+</body>
+
+</html>
