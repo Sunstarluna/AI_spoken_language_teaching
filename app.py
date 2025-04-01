@@ -1,4 +1,4 @@
-# 和前端交互的版本7点
+
 
 from flask import Flask, request, send_file, send_from_directory
 from flask_cors import CORS
