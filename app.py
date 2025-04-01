@@ -1,3 +1,5 @@
+# 和前端交互的版本7点
+
 from flask import Flask, request, send_file, send_from_directory
 from flask_cors import CORS
 import base64
@@ -18,11 +20,11 @@ CORS(app)
 
 # 创建OpenAI客户端实例
 client = OpenAI(
-    api_key="Aliyun_API_KEY",
+    api_key="sk-df1e3184beb34e07b4865f1163185cdc",
     base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
 )
 # 设置 DashScope API Key
-dashscope.api_key = "Aliyun_API_KEY"
+dashscope.api_key = "sk-42d6a6b889c0440ebf61a18bdc7991dd"
 
 
 # 定义音频编码函数
@@ -174,7 +176,8 @@ def process_audio(audio_data):
 # 定义根路径路由来提供 index.html
 @app.route("/")
 def index():
-    return send_from_directory("/Users/littlemouse/Documents/AIwaijiao", "index.html")
+    # 使用当前目录下的index.html
+    return send_from_directory(".", "index.html")
 
 
 # 定义上传录音文件的路由
