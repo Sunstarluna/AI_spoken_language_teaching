@@ -18,11 +18,11 @@ CORS(app)
 
 # 创建OpenAI客户端实例
 client = OpenAI(
-    api_key="sk-7c5fceab17bc47ca865636eb766931ac",
+    api_key="Aliyun_API_KEY",
     base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
 )
 # 设置 DashScope API Key
-dashscope.api_key = "sk-345b99e4277a4b51b17cfcceee052435"
+dashscope.api_key = "Aliyun_API_KEY"
 
 
 # 定义音频编码函数
