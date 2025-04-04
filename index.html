@@ -74,6 +74,38 @@
             color: white;
             display: flex;
             align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .course-selector {
+            margin-left: auto;
+            /* 确保选择器靠右 */
+        }
+
+        .course-selector select {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            outline: none;
+            transition: background-color 0.3s;
+        }
+
+        .course-selector select:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .course-selector select option {
+            background-color: var(--primary-color);
+            color: white;
         }
 
         .teacher-avatar {
@@ -285,6 +317,13 @@
                     <h3>Sarah Johnson</h3>
                     <p>英语外教 · 在线</p>
                 </div>
+                <div class="course-selector">
+                    <select id="courseLevel">
+                        <option value="L0">初学者课程 (Beginners)</option>
+                        <option value="L1" selected>中级课程 (Intermediate)</option>
+                        <option value="L2">高级课程 (Advanced)</option>
+                    </select>
+                </div>
             </div>
 
             <div class="chat-messages" id="chatMessages">
@@ -326,6 +365,63 @@
         let audioChunks = [];
         let mediaStream;
         let activeSoundElement = null;
+
+        const courseContent = {
+            "L0": {
+                level: "初学者课程 (Beginners)",
+                greeting: "你好！我是你的英语外教Sarah。今天我们将学习基础英语对话。让我们从简单的问候开始吧！请用英语向我问好。"
+            },
+            "L1": {
+                level: "中级课程 (Intermediate)",
+                greeting: "你好！我是你的英语外教Sarah。今天我们来练习一些餐厅相关的英语对话。你可以开始录音，用英语向我问候。"
+            },
+            "L2": {
+                level: "高级课程 (Advanced)",
+                greeting: "你好！我是你的英语外教Sarah。今天我们将探讨一些高级英语表达和修辞手法。请用英语向我介绍你最近读过的一本书或看过的一部电影。"
+            }
+        };
+
+        // 监听课程选择变化
+        document.getElementById('courseLevel').addEventListener('change', function () {
+            const level = this.value;
+            const course = courseContent[level];
+
+            console.log('选择了课程级别:', level);  // 添加日志
+
+            // 清空聊天记录
+            const messagesContainer = document.getElementById('chatMessages');
+            messagesContainer.innerHTML = '';
+
+            // 添加新的欢迎消息
+            addMessage(course.greeting, false);
+
+            // 重置录音状态
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                if (mediaStream) {
+                    mediaStream.getTracks().forEach(track => track.stop());
+                }
+            }
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            document.getElementById('startBtn').classList.remove('recording');
+
+            // 将选择的课程级别发送到后端
+            fetch('/set_level', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ level: level })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('课程级别已更新:', data);
+                })
+                .catch(error => {
+                    console.error('更新课程级别失败:', error);
+                });
+        });
 
         // 获取当前时间
         function getCurrentTime() {
