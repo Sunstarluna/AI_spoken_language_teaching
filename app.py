@@ -1,6 +1,6 @@
 
 
-from flask import Flask, request, send_file, send_from_directory
+from flask import Flask, request, send_file, send_from_directory, jsonify
 from flask_cors import CORS
 import base64
 import soundfile as sf
@@ -14,26 +14,26 @@ import io
 import os
 import traceback
 
-# 创建Flask应用并启用CORS
+# 创建Flask应用并启用CORS ---AI写的
 app = Flask(__name__)
 CORS(app)
 
-# 创建OpenAI客户端实例
+# 创建OpenAI客户端实例  ---API文档里的
 client = OpenAI(
-    api_key="sk-df1e3184beb34e07b4865f1163185cdc",
+    api_key="ALIYUN_API_KEY",
     base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
 )
-# 设置 DashScope API Key
-dashscope.api_key = "sk-42d6a6b889c0440ebf61a18bdc7991dd"
+# 设置 DashScope API Key  ---API文档里的
+dashscope.api_key = "ALIYUN_API_KEY"
 
 
-# 定义音频编码函数
+# 定义音频编码函数 ---API文档里的
 def encode_audio(audio_path):
     with open(audio_path, "rb") as audio_file:
         return base64.b64encode(audio_file.read()).decode("utf-8")
 
 
-# 定义教材知识库
+# 定义教材知识库-----AI写的
 textbook = {
     "L0": {
         "level": "beginners",
@@ -70,10 +70,28 @@ textbook = {
     },
 }
 
-# 选择教材级别（L0, L1, L2）
+# 选择教材级别（L0, L1, L2）---AI写的
 textbook_level = "L1"
 
-# 动态设置 system 角色的内容
+
+# 添加一个新的路由来设置课程级别
+@app.route("/set_level", methods=["POST"])
+def set_level():
+    global textbook_level
+    data = request.json
+    new_level = data.get("level")
+
+    # 验证级别是否有效
+    if new_level in textbook:
+        textbook_level = new_level
+        print(f"课程级别已更新为: {textbook_level}")  # 添加日志
+        return jsonify({"status": "success", "level": textbook_level})
+    else:
+        print(f"无效的课程级别: {new_level}")  # 添加日志
+        return jsonify({"status": "error", "message": "Invalid level"}), 400
+
+
+# 动态设置 system 角色的内容 ---AI写的
 level_info = textbook[textbook_level]
 system_message = (
     f"You're an English teacher and you like pink. You are having a conversation with your student. Your aim is to teach him English. "
@@ -84,8 +102,9 @@ system_message = (
 )
 
 
-# 定义处理录音文件的函数
-def process_audio(audio_data):
+# 定义接收前端录音文件的函数 ---AI写的
+# 修改 process_audio 函数定义
+def process_audio(audio_data, system_message):
     try:
         # 保存原始音频文件
         input_file = "temp.webm"  # 改为 .webm 扩展名
@@ -173,17 +192,24 @@ def process_audio(audio_data):
         return None
 
 
-# 定义根路径路由来提供 index.html
+# 定义根路径路由来提供 index.html ---AI写的
 @app.route("/")
 def index():
     # 使用当前目录下的index.html
     return send_from_directory(".", "index.html")
 
 
-# 定义上传录音文件的路由
+# 定义上传音频文件的反馈函数 ---AI写的
+# 在 app.py 文件中修改 upload_audio 函数
+
 @app.route("/upload", methods=["POST"])
 def upload_audio():
+    global textbook_level
+    
     try:
+        # 打印当前使用的课程级别（调试用）
+        print(f"处理音频上传，当前课程级别: {textbook_level}")
+        
         if "audio" not in request.files:
             print("没有收到音频文件")
             return "No audio file part", 400
@@ -196,7 +222,25 @@ def upload_audio():
         if file:
             print("开始处理音频文件...")
             audio_data = file.read()
-            wav_file_path = process_audio(audio_data)
+            
+            # 确保使用最新的课程级别
+            current_level = textbook_level
+            print(f"使用课程级别: {current_level}")
+            
+            # 使用当前选择的课程级别
+            level_info = textbook[current_level]
+            
+            # 动态设置 system 角色的内容
+            system_message = (
+                f"You're an English teacher and you like pink. You are having a conversation with your student. Your aim is to teach him English. "
+                f"The class you're talking to is {level_info['level']}. "
+                f"Here are some words and sentences for your class:\n"
+                f"Words: {', '.join(level_info['words'])}\n"
+                f"Sentences:\n- " + "\n- ".join(level_info["sentences"])
+            )
+            
+            # 将 system_message 传递给 process_audio 函数
+            wav_file_path = process_audio(audio_data, system_message)
 
             if wav_file_path:
                 print(f"音频处理成功，返回文件：{wav_file_path}")
@@ -220,5 +264,8 @@ def upload_audio():
         return f"Error processing request: {str(e)}", 500
 
 
+# 当 app.py 被直接运行时，启动一个 Flask 开发服务器。
+# 服务器会在 0.0.0.0:5010 地址上监听请求，并启用调试模式以便于开发和调试。
+# ---AI写的
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5010)
