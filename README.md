@@ -29,14 +29,21 @@ cd AI_spoken_language_teaching
 
 **安装依赖**
 sudo apt update
+
 sudo apt install python3-pip
 
 pip3 install Flask
+
 pip3 install flask-cors
+
 pip3 install openai
+
 pip3 install dashscope
+
 pip3 install pydub
+
 pip3 install simpleaudio
+
 pip3 install soundfile
 
 ### 注意
