@@ -28,22 +28,16 @@ git clone https://github.com/Sunstarluna/AI_spoken_language_teaching
 cd AI_spoken_language_teaching
 
 **安装依赖**
-
-pip3 install -r requirements.txt 
-
-pip3 install flask
-
-pip3 install flask-cors
-
-pip3 install pydub
-
 sudo apt update
+sudo apt install python3-pip
 
-sudo apt update && sudo apt install python3-dev libasound2-dev
-
+pip3 install Flask
+pip3 install flask-cors
+pip3 install openai
+pip3 install dashscope
+pip3 install pydub
 pip3 install simpleaudio
-
-sudo apt install -y libasound2-dev ffmpeg libsndfile1 python3-dev
+pip3 install soundfile
 
 ### 注意
 项目里的模型采用的是多模态的通义千问2.5-Omni-7B模型 和 Sambert语音合成模型。项目代码里的API-KEY 请替换为 aliyun的API-KEY。
