@@ -28,6 +28,7 @@ git clone https://github.com/Sunstarluna/AI_spoken_language_teaching
 cd AI_spoken_language_teaching
 
 **安装依赖**
+
 sudo apt update
 
 sudo apt install python3-pip
